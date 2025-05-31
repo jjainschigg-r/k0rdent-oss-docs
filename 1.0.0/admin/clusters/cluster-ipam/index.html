@@ -3561,7 +3561,11 @@
 <p><code>k0rdent</code> provides a flexible IP Address Management (IPAM) system that enables deterministic allocation of IP addresses throughout the cluster lifecycle.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>At the moment <strong>only node network is supported</strong></p>
+<p>At the moment <strong>only node network is supported</strong>.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>IPAM is currently unsupported on ARM64 architectures. </p>
 </div>
 <p>With IPAM enabled, IP addresses can be assigned to both worker and control plane nodes.</p>
 <p>Administrators can define address ranges using either CIDR blocks or explicit IP lists, enabling:</p>
