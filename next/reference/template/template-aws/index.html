@@ -3074,6 +3074,15 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#non-root-volumes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Non-root volumes
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -3780,6 +3789,15 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#non-root-volumes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Non-root volumes
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -3854,7 +3872,7 @@ the <code>ClusterDeployment</code> object. The name of the key should then be pl
 <p>The same SSH key will be used for all machines and a bastion host, or jump box. The bastion host is used as a single entry point that provides access to the rest of the cluster, enabling you to more tightly control access.</p>
 <p>To enable the bastion, set the <code>.spec.config.bastion.enabled</code> option in the
 <code>ClusterDeployment</code> object to <code>true</code>.</p>
-<p>You can get a full list of the bastion configuration options in the <a href="https://cluster-api-aws.sigs.k8s.io/crd/#infrastructure.cluster.x-k8s.io/v1beta1.Bastion">CAPA docs</a>.</p>
+<p>You can get a full list of the bastion configuration options in the <a href="https://cluster-api-aws.sigs.k8s.io/crd/#infrastructure.cluster.x-k8s.io/v1beta2.Bastion">CAPA docs</a>.</p>
 <p>The resulting <code>ClusterDeployment</code> might look something like this:</p>
 <div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">k0rdent.mirantis.com/v1beta1</span>
 <span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ClusterDeployment</span>
@@ -3901,6 +3919,32 @@ to apply the workaround.</p>
 <span class="w">    </span><span class="nt">workersNumber</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
 <span class="nn">...</span>
 </code></pre></div>
+<h2 id="non-root-volumes">Non-root volumes<a class="headerlink" href="#non-root-volumes" title="Permanent link">#</a></h2>
+<p>To configure options for non-root storage volumes, set the corresponding
+fields in the <code>ClusterDeployment</code> responsible for these settings, which depend on the template in use:</p>
+<table>
+<thead>
+<tr>
+<th>Template</th>
+<th>Section(s)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>aws-standalone-cp-1-0-0</code></td>
+<td><code>.spec.controlPlane.nonRootVolumes</code>,<code>.spec.worker.nonRootVolumes</code></td>
+</tr>
+<tr>
+<td><code>aws-hosted-cp-1-0-0</code></td>
+<td><code>.spec.nonRootVolumes</code></td>
+</tr>
+<tr>
+<td><code>aws-eks-1-0-0</code></td>
+<td><code>.spec.worker.nonRootVolumes</code></td>
+</tr>
+</tbody>
+</table>
+<p>The <code>nonRootVolumes</code> field is <strong>a list</strong> of <a href="https://cluster-api-aws.sigs.k8s.io/crd/#infrastructure.cluster.x-k8s.io/v1beta2.Volume">Volumes</a>.</p>
 
 
 
