@@ -9,7 +9,11 @@ permissions:
   contents: write
   pages: write
   id-token: write
-  
+
+concurrency:
+  group: gh-pages-deploy
+  cancel-in-progress: false
+
 jobs:
   call-shared:
     uses: k0rdent/docs/.github/workflows/deploy-docs.yml@main
