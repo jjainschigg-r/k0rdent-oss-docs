@@ -8,6 +8,10 @@ on:
         type: string
         description: "The branch to deploy docs for"
 
+concurrency:
+  group: deploy-docs-gh-pages
+  cancel-in-progress: false
+
 permissions:
   contents: write
   pages: write
@@ -16,11 +20,6 @@ permissions:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
-    # 🚀 Added environment block to serialize deploys
-    # This ensures that only one deploy to 'docs-deploy' runs at a time
-    environment:
-      name: docs-deploy  # This environment must exist in your repo settings
 
     steps:
       - name: Checkout this branch
