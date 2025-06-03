@@ -1,4 +1,4 @@
-# Welcome to the {{{ docsVersionInfo.k0rdentName }}} docs TEST2 0.1.0
+# Welcome to the {{{ docsVersionInfo.k0rdentName }}} docs TEST3 0.1.0
 ## Introduction
 
 {{{ docsVersionInfo.k0rdentName }}} has been developed to provide a way to manage distributed infrastructure
