@@ -1,4 +1,4 @@
-# Welcome to the {{{ docsVersionInfo.k0rdentName }}} docs TEST2 v0.3.0
+# Welcome to the {{{ docsVersionInfo.k0rdentName }}} docs TEST3 v0.3.0
 
 ## Introduction
 
