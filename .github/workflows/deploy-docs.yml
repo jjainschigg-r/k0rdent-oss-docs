@@ -1,4 +1,4 @@
-name: Deploy Docs Reusable
+name: Deploy Docs Reusable Workflow
 
 on:
   workflow_call:
@@ -107,7 +107,7 @@ jobs:
               mike delete --push dummy
             fi
           else
-            echo "gh-pages branch already yahoo exists."
+            echo "gh-pages branch already exists."
           fi
 
       - name: Deploy site with mike (no push yet)
@@ -139,6 +139,7 @@ jobs:
 
       - name: Commit and push to gh-pages (with retry)
         run: |
+          set +e
           git commit -am "Update version metadata and trigger deploy" || echo "No changes to commit"
           max_attempts=5
           attempt=1
