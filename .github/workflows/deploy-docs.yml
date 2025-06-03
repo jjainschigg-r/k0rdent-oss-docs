@@ -8,10 +8,6 @@ on:
         type: string
         description: "The branch to deploy docs for"
 
-concurrency:
-  group: deploy-docs-gh-pages
-  cancel-in-progress: false
-
 permissions:
   contents: write
   pages: write
@@ -129,10 +125,26 @@ jobs:
         if: ${{ steps.vars.outputs.default == 'true' }}
         run: mike set-default "${{ steps.vars.outputs.version }}"
 
-      - name: Commit and push to gh-pages
+      - name: Commit and push to gh-pages (with retry)
         run: |
           git commit -am "Update version metadata and trigger deploy" || echo "No changes to commit"
-          git push origin gh-pages
+          max_attempts=5
+          attempt=1
+          while [ $attempt -le $max_attempts ]; do
+            if git push origin gh-pages; then
+              echo "Push to gh-pages succeeded."
+              break
+            else
+              echo "Push failed (attempt $attempt/$max_attempts). Will retry after pulling and waiting."
+              git pull --rebase origin gh-pages || true
+              sleep 20
+              attempt=$((attempt+1))
+            fi
+          done
+          if [ $attempt -gt $max_attempts ]; then
+            echo "ERROR: Failed to push to gh-pages after $max_attempts attempts."
+            exit 1
+          fi
 
       - name: Final reminder
         run: |
