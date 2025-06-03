@@ -139,19 +139,25 @@ jobs:
           git commit -am "Update version metadata and trigger deploy" || echo "No changes to commit"
           max_attempts=5
           attempt=1
+          success=0
           while [ $attempt -le $max_attempts ]; do
-            if git push origin gh-pages; then
+            echo "Attempt $attempt to push to gh-pages..."
+            git push origin gh-pages
+            rc=$?
+            if [ $rc -eq 0 ]; then
               echo "Push to gh-pages succeeded."
+              success=1
               break
             else
-              echo "Push failed (attempt $attempt/$max_attempts). Will retry after pulling and waiting."
-              git fetch origin gh-pages
+              echo "Push failed (attempt $attempt/$max_attempts, exit code $rc)."
+              echo "Fetching and rebasing gh-pages, then retrying after sleep..."
+              git fetch origin gh-pages || true
               git rebase origin/gh-pages || git rebase --strategy-option=ours origin/gh-pages || true
               sleep 20
               attempt=$((attempt+1))
             fi
           done
-          if [ $attempt -gt $max_attempts ]; then
+          if [ $success -ne 1 ]; then
             echo "ERROR: Failed to push to gh-pages after $max_attempts attempts."
             exit 1
           fi
