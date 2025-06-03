@@ -1,5 +1,4 @@
-- name: 🚨 THIS IS THE NEW WORKFLOW FILE 🚨
-  run: echo ">>> NEW WORKFLOW FILE IS RUNNING <<<"
+name: Deploy Docs Reusable
 
 on:
   workflow_call:
@@ -19,6 +18,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: 🚨 THIS IS THE NEW WORKFLOW FILE 🚨
+        run: echo ">>> NEW WORKFLOW FILE IS RUNNING <<<"
+
       - name: Checkout this branch
         uses: actions/checkout@v4
         with:
