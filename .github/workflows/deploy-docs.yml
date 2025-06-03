@@ -88,12 +88,21 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Ensure gh-pages branch exists
+      - name: Ensure gh-pages branch exists (race safe)
         run: |
           if ! git ls-remote --exit-code --heads origin gh-pages > /dev/null; then
             echo "gh-pages branch not found. Initializing with dummy version."
-            mike deploy --push --update-aliases --allow-empty dummy
-            mike delete --push dummy
+            if ! mike deploy --push --update-aliases --allow-empty dummy; then
+              echo "Initialization failed. Checking if gh-pages now exists..."
+              if git ls-remote --exit-code --heads origin gh-pages > /dev/null; then
+                echo "gh-pages branch now exists. Continuing."
+              else
+                echo "Initialization failed for unknown reason."
+                exit 1
+              fi
+            else
+              mike delete --push dummy
+            fi
           else
             echo "gh-pages branch already exists."
           fi
@@ -136,7 +145,8 @@ jobs:
               break
             else
               echo "Push failed (attempt $attempt/$max_attempts). Will retry after pulling and waiting."
-              git pull --rebase origin gh-pages || true
+              git fetch origin gh-pages
+              git rebase origin/gh-pages || git rebase --strategy-option=ours origin/gh-pages || true
               sleep 20
               attempt=$((attempt+1))
             fi
