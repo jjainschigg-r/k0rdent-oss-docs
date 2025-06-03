@@ -1,4 +1,4 @@
-# Welcome to the {{{ docsVersionInfo.k0rdentName }}} docs
+# Welcome to the {{{ docsVersionInfo.k0rdentName }}} docs v0.1.0
 ## Introduction
 
 {{{ docsVersionInfo.k0rdentName }}} has been developed to provide a way to manage distributed infrastructure
