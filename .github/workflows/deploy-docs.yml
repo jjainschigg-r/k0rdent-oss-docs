@@ -104,7 +104,7 @@ jobs:
               mike delete --push dummy
             fi
           else
-            echo "gh-pages branch already exists."
+            echo "gh-pages branch already yahoo exists."
           fi
 
       - name: Deploy site with mike (no push yet)
