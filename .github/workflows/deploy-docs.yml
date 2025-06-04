@@ -42,7 +42,17 @@ jobs:
           python3 -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Deploy with mike according to branch rules
+      - name: Ensure gh-pages branch exists (create if needed)
+        run: |
+          if ! git ls-remote --exit-code --heads origin gh-pages > /dev/null; then
+            echo "Initializing gh-pages with dummy content..."
+            mike deploy --push --update-aliases --allow-empty dummy
+            mike delete --push dummy
+          else
+            echo "gh-pages branch already exists. No initialization needed."
+          fi
+          
+      - name: Deploy with mike according to branch rules (CHANGE THIS EACH TIME YOU DO A VERSION BUMP)
         run: |
           set -e
     
