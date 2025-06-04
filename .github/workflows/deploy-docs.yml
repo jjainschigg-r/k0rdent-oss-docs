@@ -2,6 +2,10 @@ name: Deploy Docs Reusable Workflow
 
 on:
   workflow_call:
+    inputs:
+      branch:
+        required: true
+        type: string
 
 permissions:
   contents: write
