@@ -17,21 +17,30 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Set up Python and install requirements
+      - name: Verify branch is relevant (very defensive)
         run: |
-          python3 -m pip install --upgrade pip
-          pip install -r requirements.txt
+          allowed=("main" "release-v0.1.0" "release-v0.2.0" "release-v0.3.0" "release-v1.0.0")
+          branch="${{ inputs.branch }}"
+          if [[ ! " ${allowed[@]} " =~ " ${branch} " ]]; then
+            echo "❌ ERROR: Branch '${branch}' is not in the list of allowed branches."
+            exit 1
+          fi
 
       - name: Configure git identity
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-
-      - name: Checkout the pushed release branch
+          
+      - name: Checkout the pushed release branch (now that we know it's relevant)
         uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.branch || github.ref_name }}
+          ref: ${{ inputs.branch }}
           fetch-depth: 0
+    
+      - name: Set up Python and install requirements using requirements.txt from the branch
+        run: |
+          python3 -m pip install --upgrade pip
+          pip install -r requirements.txt
 
       - name: Deploy with mike according to branch rules
         run: |
