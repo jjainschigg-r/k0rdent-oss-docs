@@ -26,6 +26,7 @@ jobs:
       - name: Checkout the pushed release branch
         uses: actions/checkout@v4
         with:
+          ref: ${{ inputs.branch || github.ref_name }}
           fetch-depth: 0
 
       - name: Deploy with mike according to branch rules
