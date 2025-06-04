@@ -1,18 +1,15 @@
+
 name: Deploy Docs Caller
 
 on:
   push:
     branches:
-      - '**'  # Trigger on push to any branch
+      - '**'  # Trigger on push to any branch (so this file can be the same in all release branches)
 
 permissions:
   contents: write
   pages: write
   id-token: write
-
-concurrency:
-  group: gh-pages-deploy
-  cancel-in-progress: false
 
 jobs:
   call-shared:
