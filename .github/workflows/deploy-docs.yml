@@ -2,11 +2,6 @@ name: Deploy Docs Reusable Workflow
 
 on:
   workflow_call:
-    inputs:
-      branch:
-        required: false
-        type: string
-        description: "The branch to deploy docs for"
 
 permissions:
   contents: write
@@ -18,152 +13,42 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 🚨 THIS IS THE NEW WORKFLOW FILE 🚨
-        run: echo ">>> NEW WORKFLOW FILE IS RUNNING <<<"
-
-      - name: Checkout this branch
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
-
-      - name: Fetch versions.yml from main
-        run: |
-          git fetch origin main
-          if git ls-tree -r origin/main --name-only | grep -q '^versions.yml$'; then
-            git checkout origin/main -- versions.yml
-          else
-            echo "versions.yml not found in main. Exiting."
-            exit 1
-          fi
-
-      - name: Parse versions.yml for this branch
-        id: vars
-        run: |
-          python3 <<EOF
-          import os, sys, yaml
-
-          branch = os.environ.get("INPUT_BRANCH") or os.environ["GITHUB_REF_NAME"]
-          print(f"::group::Parsing versions.yml for branch '{branch}'")
-
-          with open("versions.yml") as f:
-              data = yaml.safe_load(f)
-
-          match = next((v for v in data["versions"] if v["branch"] == branch), None)
-          if not match:
-              print(f"::notice:: No match for branch {branch}. Exiting.")
-              sys.exit(0)
-
-          for key in ("version", "title", "aliases"):
-              if key not in match:
-                  print(f"::error:: Missing key '{key}' in entry for branch {branch}")
-                  sys.exit(1)
-
-          version = match["version"]
-          title = match["title"]
-          aliases = match["aliases"]
-          default = 'true' if match.get('default', False) else 'false'
-
-          print(f"version: {version}")
-          print(f"title: {title}")
-          print(f"aliases: {aliases}")
-          print(f"default: {default}")
-
-          with open(os.environ["GITHUB_OUTPUT"], "a") as ghout:
-              ghout.write(f"version={version}\n")
-              ghout.write(f"title={title}\n")
-              ghout.write(f"aliases={' '.join(aliases)}\n")
-              ghout.write(f"default={default}\n")
-          EOF
-
       - name: Set up Python and install requirements
         run: |
           python3 -m pip install --upgrade pip
           pip install -r requirements.txt
-
-      - name: Checkout branch content
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ inputs.branch || github.ref_name }}
-          fetch-depth: 0
 
       - name: Configure git identity
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Ensure gh-pages branch exists (race safe)
+      - name: Checkout the pushed release branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Deploy with mike according to branch rules
         run: |
-          if ! git ls-remote --exit-code --heads origin gh-pages > /dev/null; then
-            echo "gh-pages branch not found. Initializing with dummy version."
-            if ! mike deploy --push --update-aliases --allow-empty dummy; then
-              echo "Initialization failed. Checking if gh-pages now exists..."
-              if git ls-remote --exit-code --heads origin gh-pages > /dev/null; then
-                echo "gh-pages branch now exists. Continuing."
-              else
-                echo "Initialization failed for unknown reason."
-                exit 1
-              fi
-            else
-              mike delete --push dummy
-            fi
+          set -e
+    
+          branch="${GITHUB_REF_NAME}"
+          echo "Deploying docs for branch: $branch"
+    
+          if [[ "$branch" == "main" ]]; then
+            mike deploy -t "next" --update-aliases --push next head
+    
+          elif [[ "$branch" == "release-v1.0.0" ]]; then
+            mike deploy -t "v1.0.0 (latest)" --update-aliases --push v1.0.0 latest stable
+            mike set-default --push latest
+    
+          elif [[ "$branch" == release-v* ]]; then
+            version="${branch#release-}"
+            mike deploy -t "$version" --update-aliases --push "$version"
+    
           else
-            echo "gh-pages branch already exists."
-          fi
-
-      - name: Deploy site with mike (no push yet)
-        run: |
-          mike deploy --update-aliases --allow-empty \
-            "${{ steps.vars.outputs.version }}" \
-            ${{ steps.vars.outputs.aliases }}
-
-      - name: Make dummy change in gh-pages to enable retitle commit
-        run: |
-          mkdir -p .meta
-          echo "build: $(date -u +"%Y-%m-%dT%H:%M:%SZ")" > .meta/last-build.txt
-          git add .meta/last-build.txt
-
-      - name: Retitle version for mike
-        run: mike retitle "${{ steps.vars.outputs.version }}" "${{ steps.vars.outputs.title }}"
-
-      - name: Set aliases for mike
-        run: |
-          if [ -z "${{ steps.vars.outputs.aliases }}" ]; then
-            mike alias "${{ steps.vars.outputs.version }}"
-          else
-            mike alias "${{ steps.vars.outputs.version }}" ${{ steps.vars.outputs.aliases }}
-          fi
-
-      - name: Set default version (if applicable)
-        if: ${{ steps.vars.outputs.default == 'true' }}
-        run: mike set-default "${{ steps.vars.outputs.version }}"
-
-      - name: Commit and push to gh-pages (with retry)
-        run: |
-          set +e
-          git commit -am "Update version metadata and trigger deploy" || echo "No changes to commit"
-          max_attempts=5
-          attempt=1
-          success=0
-          while [ $attempt -le $max_attempts ]; do
-            echo "Attempt $attempt to push to gh-pages..."
-            git push origin gh-pages
-            rc=$?
-            if [ $rc -eq 0 ]; then
-              echo "Push to gh-pages succeeded."
-              success=1
-              break
-            else
-              echo "Push failed (attempt $attempt/$max_attempts, exit code $rc)."
-              echo "Fetching and rebasing gh-pages, then retrying after sleep..."
-              git fetch origin gh-pages || true
-              git rebase origin/gh-pages || git rebase --strategy-option=ours origin/gh-pages || true
-              sleep 20
-              attempt=$((attempt+1))
-            fi
-          done
-          if [ $success -ne 1 ]; then
-            echo "ERROR: Failed to push to gh-pages after $max_attempts attempts."
-            exit 1
+            echo "No deploy rule for branch: $branch"
+            exit 0
           fi
 
       - name: Final reminder
