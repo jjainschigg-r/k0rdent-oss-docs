@@ -3668,11 +3668,12 @@
 <p><code>k0rdent</code> provides a flexible IP Address Management (IPAM) system that enables deterministic allocation of IP addresses throughout the cluster lifecycle.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>At the moment <strong>only node network is supported</strong>.</p>
-</div>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>IPAM is currently unsupported on ARM64 architectures.</p>
+<p>Keep in mind the following about IPAM support:</p>
+<ul>
+<li>At the moment <strong>only node network is supported</strong>.</li>
+<li>IPAM is currently unsupported on ARM64 architectures.</li>
+<li>IPAM has only been tested on VMware VSphere. Support for other providers will be added in the future.</li>
+</ul>
 </div>
 <p>With IPAM enabled, IP addresses can be assigned to both worker and control plane nodes.</p>
 <p>Administrators can define address ranges using either CIDR blocks or explicit IP lists, enabling:</p>
@@ -3701,6 +3702,11 @@
 <li>
 <p>Define a <code>ClusterIPAMClaim</code></p>
 <p>The <code>ClusterIPAMClaim</code> resource reserves the required IP address space for the cluster. The node network segment can be defined using either a <code>cidr</code> or a static list of <code>ipAddresses</code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>
+The value for <code>provider</code> must be <code>in-cluster</code> or <code>ipam-infoblox</code>.</p>
+</div>
 <div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">k0rdent.mirantis.com/v1beta1</span>
 <span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ClusterIPAMClaim</span>
 <span class="nt">metadata</span><span class="p">:</span>
