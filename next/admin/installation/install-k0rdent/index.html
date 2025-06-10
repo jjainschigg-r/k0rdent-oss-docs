@@ -80,7 +80,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#macro-rendering-error" class="md-skip">
+        <a href="#install-k0rdent" class="md-skip">
           Skip to content
         </a>
       
@@ -829,6 +829,17 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Install k0rdent
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         
   
@@ -838,6 +849,34 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#cleanup-uninstall-k0rdent" class="md-nav__link">
+    <span class="md-ellipsis">
+      Cleanup: Uninstall k0rdent
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -3635,6 +3674,23 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#cleanup-uninstall-k0rdent" class="md-nav__link">
+    <span class="md-ellipsis">
+      Cleanup: Uninstall k0rdent
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -3664,23 +3720,48 @@
   
 
 
-<h1 id="macro-rendering-error"><em>Macro Rendering Error</em><a class="headerlink" href="#macro-rendering-error" title="Permanent link">#</a></h1>
-<p><em>File</em>: <code>admin/installation/install-k0rdent.md</code></p>
-<p><em>UndefinedError</em>: 'k0rdentDocsInfo' is undefined</p>
-<div class="highlight"><pre><span></span><code>Traceback (most recent call last):
-  File &quot;/home/runner/.local/lib/python3.12/site-packages/mkdocs_macros/plugin.py&quot;, line 688, in render
-    return md_template.render(**page_variables)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File &quot;/usr/lib/python3/dist-packages/jinja2/environment.py&quot;, line 1301, in render
-    self.environment.handle_exception()
-  File &quot;/usr/lib/python3/dist-packages/jinja2/environment.py&quot;, line 936, in handle_exception
-    raise rewrite_traceback_stack(source=source)
-  File &quot;&lt;template&gt;&quot;, line 5, in top-level template code
-  File &quot;/usr/lib/python3/dist-packages/jinja2/environment.py&quot;, line 485, in getattr
-    return getattr(obj, attribute)
-           ^^^^^^^^^^^^^^^^^^^^^^^
-jinja2.exceptions.UndefinedError: &#39;k0rdentDocsInfo&#39; is undefined
+<h1 id="install-k0rdent">Install k0rdent<a class="headerlink" href="#install-k0rdent" title="Permanent link">#</a></h1>
+<p>This section assumes that you already have a kubernetes cluster installed. If you need to setup a cluster you can follow the <a href="../create-mgmt-clusters/mgmt-create-k0s-single/">Create and prepare a Kubernetes cluster with k0s</a> to create a test cluster, or <a href="../create-mgmt-clusters/mgmt-create-eks-multi/">Create and prepare a production grade Kubernetes cluster with EKS</a> to create something more substantial. </p>
+<p>The actual management cluster is a Kubernetes cluster with the k0rdent application installed. The simplest way to install k0rdent is through its Helm chart.  You can find the latest release <a href="https://github.com/k0rdent/kcm/tags">here</a>, and from there you can deploy the Helm chart, as in:</p>
+<p><div class="highlight"><pre><span></span><code>helm<span class="w"> </span>install<span class="w"> </span>kcm<span class="w"> </span>oci://ghcr.io/k0rdent/kcm/charts/kcm<span class="w"> </span>--version<span class="w"> </span><span class="m">1</span>.0.0<span class="w"> </span>-n<span class="w"> </span>kcm-system<span class="w"> </span>--create-namespace
 </code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="go">Pulled: ghcr.io/k0rdent/kcm/charts/kcm:1.0.0</span>
+<span class="go">Digest: sha256:d01dd2b6a8aec60670cde301ebdaac6c949644121161b709af6c6470291d77fc</span>
+<span class="go">NAME: kcm</span>
+<span class="go">LAST DEPLOYED: Sun May 25 14:42:29 2025</span>
+<span class="go">NAMESPACE: kcm-system</span>
+<span class="go">STATUS: deployed</span>
+<span class="go">REVISION: 1</span>
+<span class="go">TEST SUITE: None</span>
+</code></pre></div></p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>
+Make sure to specify the correct release version number.</p>
+</div>
+<p>The helm chart deploys the KCM operator and prepares the environment, and KCM then proceeds to deploy the various subcomponents, including CAPI. The entire process takes a few minutes.</p>
+<h2 id="cleanup-uninstall-k0rdent">Cleanup: Uninstall k0rdent<a class="headerlink" href="#cleanup-uninstall-k0rdent" title="Permanent link">#</a></h2>
+<p>And of course when you need to clean up, you can use helm as well. Follow these steps:</p>
+<ol>
+<li>
+<p>Remove any <code>ClusterDeployment</code> objects in the cluster.</p>
+</li>
+<li>
+<p>Delete the <code>Management</code> object:</p>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>delete<span class="w"> </span>management.k0rdent<span class="w"> </span>kcm
+</code></pre></div>
+</li>
+<li>
+<p>Remove the kcm Helm release:</p>
+<div class="highlight"><pre><span></span><code>helm<span class="w"> </span>uninstall<span class="w"> </span>kcm<span class="w"> </span>-n<span class="w"> </span>kcm-system
+</code></pre></div>
+</li>
+<li>
+<p>Finally, remove the kcm-system namespace:</p>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>delete<span class="w"> </span>ns<span class="w"> </span>kcm-system
+</code></pre></div>
+</li>
+</ol>
 
 
 
