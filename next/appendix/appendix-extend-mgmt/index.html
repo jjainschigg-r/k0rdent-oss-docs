@@ -16,7 +16,7 @@
         <link rel="prev" href="../glossary/">
       
       
-        <link rel="next" href="../appendix-dryrun/">
+        <link rel="next" href="../private-secure-registry/">
       
       
       <link rel="icon" href="../../img/k0rdent-logo-mark-inverted.svg">
@@ -3312,6 +3312,8 @@
       
         
       
+        
+      
     
     
     
@@ -3457,6 +3459,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#configuring-a-global-k0s-url" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configuring a global K0s URL
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#configuring-a-custom-image-for-kcm-controllers" class="md-nav__link">
     <span class="md-ellipsis">
       Configuring a Custom Image for KCM controllers
@@ -3483,6 +3494,27 @@
   
 </nav>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../private-secure-registry/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Deploy from a private secure registry
+  </span>
+  
+
+      </a>
     </li>
   
 
@@ -3784,6 +3816,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#configuring-a-global-k0s-url" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configuring a global K0s URL
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#configuring-a-custom-image-for-kcm-controllers" class="md-nav__link">
     <span class="md-ellipsis">
       Configuring a Custom Image for KCM controllers
@@ -3891,7 +3932,7 @@ This enables you to manage the list of providers to deploy and adjust the defaul
 <span class="w">    </span><span class="nt">kcm</span><span class="p">:</span>
 <span class="w">      </span><span class="nt">config</span><span class="p">:</span>
 <span class="w">        </span><span class="nt">controller</span><span class="p">:</span>
-<span class="w">          </span><span class="nt">defaultRegistryURL</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;oci://ghcr.io/my-oci-registry-name/kcm/charts&quot;</span>
+<span class="w">          </span><span class="nt">templatesRepoURL</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;oci://ghcr.io/my-oci-registry-name/kcm/charts&quot;</span>
 <span class="w">  </span><span class="nt">providers</span><span class="p">:</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">k0smotron</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cluster-api-provider-aws</span>
@@ -3931,26 +3972,47 @@ and may include the <code>template</code> and <code>config</code> fields:</p>
 </code></pre></div>
 <h2 id="examples-and-use-cases">Examples and Use Cases<a class="headerlink" href="#examples-and-use-cases" title="Permanent link">#</a></h2>
 <h3 id="configuring-a-custom-oci-registry-for-kcm-components">Configuring a Custom OCI Registry for KCM components<a class="headerlink" href="#configuring-a-custom-oci-registry-for-kcm-components" title="Permanent link">#</a></h3>
-<p>You can override the default registry settings in k0rdent by specifying the <code>defaultRegistryURL</code>, <code>insecureRegistry</code>,
-and <code>registryCredsSecret</code> parameters under <code>spec.core.kcm.config.controller</code>:</p>
+<p>You can override the default registry settings in k0rdent by specifying the <code>templatesRepoURL</code>, <code>insecureRegistry</code>,
+and <code>registryCredsSecret</code> parameters under <code>spec.core.kcm.config.controller</code>.</p>
 <ul>
-<li><code>defaultRegistryURL</code>: Specifies the registry URL for downloading Helm charts representing templates. 
+<li><code>templatesRepoURL</code>: Specifies the registry URL for downloading Helm charts representing templates.
 Use the <code>oci://</code> prefix for OCI registries. Default: <code>oci://ghcr.io/k0rdent/kcm/charts</code>.</li>
+<li><code>globalRegistry</code>: Specifies the global registry. This value will be propagated to all <code>ClusterDeployment</code> objects
+configuration as <code>global.registry</code> (for example, it is used for pulling cluster Helm extensions, such as the Cloud
+Controller Manager and to download required images, such as <code>etcd</code> or <code>kube-proxy</code>).</li>
 <li><code>insecureRegistry</code>: Allows connecting to an HTTP registry. Default: <code>false</code>.</li>
-<li><code>registryCredsSecret</code>: Specifies the name of a Kubernetes Secret containing authentication credentials for the 
-registry (optional). This Secret should exist in the system namespace (default: <code>kcm-system</code>).</li>
+<li><code>registryCredsSecret</code>: Specifies the name of a Kubernetes <code>Secret</code> containing authentication credentials for the 
+registry (optional). This <code>Secret</code> should exist in the system namespace (default: <code>kcm-system</code>).</li>
 </ul>
+<p>Additionally, if your registry is private and uses a certificate signed by an unknown authority, you can make the
+registry "trusted" within the K0rdent system by configuring the <code>registryCertSecret</code> parameter. This should reference
+the name of a <code>Secret</code> in the system (default: <code>kcm-system</code>) namespace containing a client certificate (<code>tls.crt</code>)
+and a private key (<code>tls.key</code>) and/or a CA certificate (<code>ca.crt</code>) for the registry endpoint.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>
+If you’re using a private registry signed by an unknown certificate authority, refer to
+<a href="../private-secure-registry/">Private Secure Registry Usage</a> for the required prerequisites.</p>
+</div>
 <p>Example Configuration:</p>
 <div class="highlight"><pre><span></span><code><span class="nt">spec</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">core</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">kcm</span><span class="p">:</span>
 <span class="w">      </span><span class="nt">config</span><span class="p">:</span>
 <span class="w">        </span><span class="nt">controller</span><span class="p">:</span>
-<span class="w">          </span><span class="nt">defaultRegistryURL</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;oci://ghcr.io/my-private-oci-registry-name/kcm/charts&quot;</span>
-<span class="w">          </span><span class="nt">insecureRegistry</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">          </span><span class="nt">templatesRepoURL</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;oci://ghcr.io/my-private-oci-registry-name/kcm/charts&quot;</span>
+<span class="w">          </span><span class="nt">globalRegistry</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ghcr.io/my-private-oci-registry-name</span>
+<span class="w">          </span><span class="nt">insecureRegistry</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 <span class="w">          </span><span class="nt">registryCredsSecret</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-private-oci-registry-creds</span>
+<span class="w">          </span><span class="nt">registryCertSecret</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">registry-cert</span>
 </code></pre></div>
-<p>Example of a Secret with Registry Credentials:</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>
+Prior to K0rdent v0.3.0, the <code>templatesRepoURL</code> parameter was named <code>defaultRegistryURL</code>.
+(See: <a href="https://github.com/k0rdent/kcm/releases/tag/v0.3.0">K0rdent v0.3.0 Release Notes</a>).</p>
+</div>
+<p>Example of a <code>Secret</code> with Registry Credentials:</p>
 <div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
 <span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Secret</span>
 <span class="nt">metadata</span><span class="p">:</span>
@@ -3959,6 +4021,32 @@ registry (optional). This Secret should exist in the system namespace (default: 
 <span class="nt">stringData</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;my-user-123&quot;</span>
 <span class="w">  </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;my-password-123&quot;</span>
+</code></pre></div>
+<p>Example of a <code>Secret</code> with Registry Certificate:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Secret</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">registry-cert</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kcm-system</span>
+<span class="nt">stringData</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">tls.crt</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">    </span><span class="no">-----BEGIN CERTIFICATE-----</span>
+<span class="w">    </span><span class="no">MIIDfjCCAmagAwIBAgIUV/Ykpp7jzkOdfsZs0wwNZOS9X04wDQYJKoZIhvcNAQEL</span>
+<span class="w">    </span><span class="no">...</span>
+<span class="w">    </span><span class="no">2eVUGBCoHgFcUrkjcZlxvjjdaV5L/Y6mEt6u9mIhsb1M8w==</span>
+<span class="w">    </span><span class="no">-----END CERTIFICATE-----</span>
+<span class="w">  </span><span class="nt">tls.key</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">    </span><span class="no">-----BEGIN PRIVATE KEY-----</span>
+<span class="w">    </span><span class="no">MIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCXi08l8qhKxcU2</span>
+<span class="w">    </span><span class="no">...</span>
+<span class="w">    </span><span class="no">oAO9TAlVxIZtwL7XWyB29w==</span>
+<span class="w">    </span><span class="no">-----END PRIVATE KEY-----</span>
+<span class="w">  </span><span class="nt">ca.crt</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">    </span><span class="no">-----BEGIN CERTIFICATE-----</span>
+<span class="w">    </span><span class="no">MIIDfjCCAmagAwIBAgIUV/Ykpp7jzkOdfsZs0wwNZOS9X04wDQYJKoZIhvcNAQEL</span>
+<span class="w">    </span><span class="no">...</span>
+<span class="w">    </span><span class="no">2eVUGBCoHgFcUrkjcZlxvjjdaV5L/Y6mEt6u9mIhsb1M8w==</span>
+<span class="w">    </span><span class="no">-----END CERTIFICATE-----</span>
 </code></pre></div>
 <p>The KCM controller will create the default <a href="https://fluxcd.io/flux/components/source/helmrepositories/">HelmRepository</a>
 using the provided configuration and fetch KCM components from this repository. For the example above,
@@ -3971,13 +4059,68 @@ the following <code>HelmRepository</code> will be created:</p>
 <span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-private-oci-registry-name</span>
 <span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kcm-system</span>
 <span class="nt">spec</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">insecure</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">  </span><span class="nt">insecure</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 <span class="w">  </span><span class="nt">interval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10m0s</span>
 <span class="w">  </span><span class="nt">provider</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">generic</span>
 <span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">oci</span>
 <span class="w">  </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">oci://ghcr.io/my-private-oci-registry-name/kcm/charts</span>
 <span class="w">  </span><span class="nt">secretRef</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-private-oci-registry-creds</span>
+<span class="w">  </span><span class="nt">certSecretRef</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">registry-cert</span>
+</code></pre></div>
+<h3 id="configuring-a-global-k0s-url">Configuring a global K0s URL<a class="headerlink" href="#configuring-a-global-k0s-url" title="Permanent link">#</a></h3>
+<p>You can override the default URL from which to download the k0s binary in k0rdent by
+specifying the <code>globalK0sURL</code>, and optionally <code>k0sURLCertSecret</code> (if the k0s download URL is private and uses a
+certificate signed by an unknown authority), under <code>spec.core.kcm.config.controller</code>. This is optional and is only
+needed when the environment does not have access to the default upstream k0s binaries endpoint. This is required for
+airgapped environments.</p>
+<ul>
+<li><code>globalK0sURL</code>: Specifies the prefix of the k0s URL from which to download the k0s binary. This value will be
+propagated to all <code>ClusterDeployment</code> objects configuration as <code>global.k0sURL</code>.</li>
+<li><code>k0sURLCertSecret</code>: The name of the secret in the system (default: <code>kcm-system</code>) namespace containing a client
+certificate (<code>tls.crt</code>) and a private key (<code>tls.key</code>) and/or a CA certificate (<code>ca.crt</code>) for the k0s download URL.</li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>
+If you’re using a private registry signed by an unknown certificate authority, refer to
+<a href="../private-secure-registry/">Private Secure Registry Usage</a> for the required prerequisites.</p>
+</div>
+<p>Example Configuration:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">core</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">kcm</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">config</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">controller</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">globalK0sURL</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://172.19.123.4:8443</span>
+<span class="w">          </span><span class="nt">k0sURLCertSecret</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">k0s-url-cert</span>
+</code></pre></div>
+<p>Example of a <code>Secret</code> with K0s URL Certificate:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Secret</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">k0s-url-cert</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kcm-system</span>
+<span class="nt">stringData</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">tls.crt</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">    </span><span class="no">-----BEGIN CERTIFICATE-----</span>
+<span class="w">    </span><span class="no">MIIDfjCCAmagAwIBAgIUV/Ykpp7jzkOdfsZs0wwNZOS9X04wDQYJKoZIhvcNAQEL</span>
+<span class="w">    </span><span class="no">...</span>
+<span class="w">    </span><span class="no">2eVUGBCoHgFcUrkjcZlxvjjdaV5L/Y6mEt6u9mIhsb1M8w==</span>
+<span class="w">    </span><span class="no">-----END CERTIFICATE-----</span>
+<span class="w">  </span><span class="nt">tls.key</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">    </span><span class="no">-----BEGIN PRIVATE KEY-----</span>
+<span class="w">    </span><span class="no">MIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCXi08l8qhKxcU2</span>
+<span class="w">    </span><span class="no">...</span>
+<span class="w">    </span><span class="no">oAO9TAlVxIZtwL7XWyB29w==</span>
+<span class="w">    </span><span class="no">-----END PRIVATE KEY-----</span>
+<span class="w">  </span><span class="nt">ca.crt</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">    </span><span class="no">-----BEGIN CERTIFICATE-----</span>
+<span class="w">    </span><span class="no">MIIDfjCCAmagAwIBAgIUV/Ykpp7jzkOdfsZs0wwNZOS9X04wDQYJKoZIhvcNAQEL</span>
+<span class="w">    </span><span class="no">...</span>
+<span class="w">    </span><span class="no">2eVUGBCoHgFcUrkjcZlxvjjdaV5L/Y6mEt6u9mIhsb1M8w==</span>
+<span class="w">    </span><span class="no">-----END CERTIFICATE-----</span>
 </code></pre></div>
 <h3 id="configuring-a-custom-image-for-kcm-controllers">Configuring a Custom Image for KCM controllers<a class="headerlink" href="#configuring-a-custom-image-for-kcm-controllers" title="Permanent link">#</a></h3>
 <p>You can override the default image for the KCM controllers by specifying the <code>repository</code>, <code>tag</code> and <code>pullPolicy</code>
@@ -3993,7 +4136,7 @@ parameters under <code>spec.core.kcm.config.image</code>: </p>
 <span class="w">          </span><span class="nt">pullPolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">IfNotPresent</span>
 </code></pre></div>
 <h3 id="configuring-manager-settings-for-capi-providers">Configuring manager settings for CAPI providers<a class="headerlink" href="#configuring-manager-settings-for-capi-providers" title="Permanent link">#</a></h3>
-<p>Starting from k0rdent <code>v0.3.0</code>, configuring manager settings for CAPI providers is supported. You can override
+<p>Starting from <code>v0.3.0</code>, k0rdent supports configuring manager settings for CAPI providers. You can override
 these settings by defining the <code>spec.providers[*].config.manager</code> section. The values under the <code>manager</code> section should
 follow the format described here:
 https://github.com/kubernetes-sigs/cluster-api-operator/blob/v0.18.1/api/v1alpha2/provider_types.go#L126.</p>
