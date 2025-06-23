@@ -3258,6 +3258,8 @@
       
         
       
+        
+      
     
     
     
@@ -3350,6 +3352,27 @@
   
   <span class="md-ellipsis">
     EKS
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../troubleshooting/known-issues-gcp/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    GCP
   </span>
   
 
@@ -3745,7 +3768,7 @@ to familiarize yourself with potential limitations of the Velero backup system.<
    Specifically, you want to <strong>avoid</strong> creating a <code>Management</code> object and similar objects because they
    will be part of your restored cluster. You can remove these objects after installation, but you
    can also install k0rdent without them in the first place:</p>
-<div class="highlight"><pre><span></span><code>helm<span class="w"> </span>install<span class="w"> </span>kcm<span class="w"> </span>oci://ghcr.io/k0rdent/kcm/charts/kcm<span class="w"> </span><span class="se">\</span>
+<p><div class="highlight"><pre><span></span><code>helm<span class="w"> </span>install<span class="w"> </span>kcm<span class="w"> </span>oci://ghcr.io/k0rdent/kcm/charts/kcm<span class="w"> </span><span class="se">\</span>
 <span class="w"> </span>--version<span class="w"> </span>&lt;version&gt;<span class="w"> </span><span class="se">\</span>
 <span class="w"> </span>--create-namespace<span class="w"> </span><span class="se">\</span>
 <span class="w"> </span>--namespace<span class="w"> </span>kcm-system<span class="w"> </span><span class="se">\</span>
@@ -3757,6 +3780,28 @@ to familiarize yourself with potential limitations of the Velero backup system.<
 <span class="w"> </span>--set<span class="w"> </span>velero.initContainers<span class="o">[</span><span class="m">0</span><span class="o">]</span>.image<span class="o">=</span>velero/velero-plugin-for-&lt;provider-name&gt;:&lt;provider-plugin-tag&gt;<span class="w"> </span><span class="se">\</span>
 <span class="w"> </span>--set<span class="w"> </span>velero.initContainers<span class="o">[</span><span class="m">0</span><span class="o">]</span>.volumeMounts<span class="o">[</span><span class="m">0</span><span class="o">]</span>.mountPath<span class="o">=</span>/target<span class="w"> </span><span class="se">\</span>
 <span class="w"> </span>--set<span class="w"> </span>velero.initContainers<span class="o">[</span><span class="m">0</span><span class="o">]</span>.volumeMounts<span class="o">[</span><span class="m">0</span><span class="o">]</span>.name<span class="o">=</span>plugins
+</code></pre></div>
+2. At the time of this writing, an upstream Velero bug means that you will need to create a <code>ConfigMap</code> adding labels to the Velero image so it can be referenced properly. First determine the image in use:</p>
+<p><div class="highlight"><pre><span></span><code>kubect<span class="w"> </span>get<span class="w"> </span>deploy<span class="w"> </span>-lcomponent<span class="o">=</span>velero<span class="w"> </span>-n<span class="w"> </span>kcm-system<span class="w"> </span>-o<span class="w"> </span>yaml<span class="w"> </span><span class="p">|</span><span class="w"> </span>yq<span class="w"> </span>.spec.template.spec.containers<span class="o">[</span><span class="m">0</span><span class="o">]</span>.image
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="go">registry.mirantis.com/k0rdent-enterprise/velero/velero:v1.16.0</span>
+</code></pre></div></p>
+</li>
+<li>
+<p>Next create the <code>ConfigMap</code>. For example, add the following to a file called <code>velero-configmap.yaml</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">data</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;image-from-above&gt;</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ConfigMap</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">velero.io/plugin-config</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">velero.io/pod-volume-restore</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">RestoreItemAction</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">velero-config</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kcm-system</span>
+</code></pre></div>
+<p>Add it to the management cluster:</p>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>apply<span class="w"> </span>-n<span class="w"> </span>kcm-system<span class="w"> </span>-f<span class="w"> </span>velero-configmap.yaml
 </code></pre></div>
 </li>
 <li>
