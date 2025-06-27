@@ -3929,7 +3929,7 @@ and use it to deploy an application to a k0rdent child cluster.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>
-<code>ServiceTemplate</code> can refer existing <code>HelmChart</code> object in <code>.spec.helm.chartRef</code> field if only <code>HelmChart</code> is backed by <code>HelmRepository</code> object.
+<code>ServiceTemplate</code> can be defined using <code>.spec.helm.chartSpec</code> or <code>.spec.helm.chartRef</code> if only Helm chart being defined or referred is backed by <code>HelmRepository</code> or <code>GitRepository</code> object.
 To use FluxCD sources, <code>ServiceTemplate</code> must be defined using <code>.spec.helm.chartSource</code> field.</p>
 </div>
 <p>FluxCD sources supported by <code>ServiceTemplate</code> are:</p>
@@ -3993,7 +3993,7 @@ To use FluxCD sources, <code>ServiceTemplate</code> must be defined using <code>
 <span class="w">      </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;./charts/ingress-nginx&quot;</span>
 </code></pre></div>
 <p>In this case, we're creating a <code>ServiceTemplate</code> called <code>ingress-nginx-4.11.3</code> in the
-   <code>my-target-namespace</code> namespace.  It references the existing <code>GitRepository</code> object called 
+   <code>my-target-namespace</code> namespace.  It references the existing <code>GitRepository</code> object called
    <code>k0rdent-catalog</code> and the Helm chart located in the <code>charts/ingress-nginx</code> path.</p>
 <ol>
 <li>Defining Helm chart source, which can be one of types provided by FluxCD:</li>
@@ -4013,7 +4013,7 @@ To use FluxCD sources, <code>ServiceTemplate</code> must be defined using <code>
 <span class="w">        </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;./ingress-nginx&quot;</span>
 </code></pre></div>
 <p>In this case, we're creating a <code>ServiceTemplate</code> called <code>ingress-nginx-4.11.3</code> in the
-   <code>my-target-namespace</code> namespace.  It defines the source of the Helm chart located in the 
+   <code>my-target-namespace</code> namespace.  It defines the source of the Helm chart located in the
    <code>s3://bucket/path/to/charts</code> bucket and path where the Helm chart is located within the bucket.</p>
 <p>For more information on creating templates, see the <a href="../../../reference/template/">Template Guide</a>.</p>
 <h3 id="creating-kustomization-based-servicetemplate">Creating Kustomization-based ServiceTemplate<a class="headerlink" href="#creating-kustomization-based-servicetemplate" title="Permanent link">#</a></h3>
@@ -4057,8 +4057,8 @@ embed archive with kustomization. After the archive was created, this can be don
 </code></pre></div>
 <p>When <code>.spec.kustomize.remoteSourceSpec</code> is defined, the controller will create corresponding object.</p>
 <h3 id="creating-raw-resources-based-servicetemplate">Creating Raw-Resources-based ServiceTemplate<a class="headerlink" href="#creating-raw-resources-based-servicetemplate" title="Permanent link">#</a></h3>
-<p>This type of source is quite similar to the kustomization sources, with the only exception: 
-when using <code>ConfigMap</code> or <code>Secret</code> as a source, the field <code>.spec.resources.localSourceRef.path</code> will be ignored 
+<p>This type of source is quite similar to the kustomization sources, with the only exception:
+when using <code>ConfigMap</code> or <code>Secret</code> as a source, the field <code>.spec.resources.localSourceRef.path</code> will be ignored
 and the resources' manifests to be deployed must be inlined in the source's <code>data</code>.</p>
 <p>Example of the <code>ConfigMap</code> and corresponding <code>ServiceTemplate</code>:</p>
 <div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>

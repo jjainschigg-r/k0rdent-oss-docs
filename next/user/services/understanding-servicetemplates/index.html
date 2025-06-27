@@ -3884,6 +3884,11 @@ be deployed as a complete application.</p>
 <li><code>ConfigMap</code></li>
 </ul>
 <h3 id="helm-based-servicetemplate">Helm-based ServiceTemplate<a class="headerlink" href="#helm-based-servicetemplate" title="Permanent link">#</a></h3>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>
+<code>ServiceTemplate</code> can be defined using <code>.spec.helm.chartSpec</code> or <code>.spec.helm.chartRef</code> if only Helm chart being defined or referred is backed by <code>HelmRepository</code> or <code>GitRepository</code> object.</p>
+</div>
 <p>Helm-based <code>ServiceTemplate</code> can be created in three ways:</p>
 <ul>
 <li>by defining Helm chart right in the template object</li>
@@ -4004,7 +4009,7 @@ be deployed as a complete application.</p>
 kustomize-based <code>ServiceTemplate</code>, however using local source slightly differ in case <code>ConfigMap</code> or <code>Secret</code> object is referred as a source:</p>
 <ul>
 <li><code>spec.resources.localSourceRef.path</code> will be ignored</li>
-<li>referred <code>ConfigMap</code> or <code>Secret</code> must contain inlined resources' definitions instead of embedding tar-gzipped archive. </li>
+<li>referred <code>ConfigMap</code> or <code>Secret</code> must contain inlined resources' definitions instead of embedding tar-gzipped archive.</li>
 </ul>
 
 

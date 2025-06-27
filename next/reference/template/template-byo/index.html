@@ -4050,12 +4050,20 @@ The custom <code>HelmRepository</code> must have the label
 <ol>
 <li>Specify the actual Helm chart definition in the <code>.spec.helm.chartSpec</code> field of the
    <a href="https://fluxcd.io/flux/components/source/api/v1/#source.toolkit.fluxcd.io/v1.HelmChartSpec">HelmChartSpec</a> kind,</li>
-<li>Reference an existing <code>HelmChart</code> object in <code>.spec.helm.chartRef</code>, or</li>
+<li>Reference an existing <code>HelmChart</code> object in <code>.spec.helm.chartRef</code></li>
 </ol>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>
-<code>spec.helm.chartSpec</code> and <code>spec.helm.chartRef</code> are mutually exclusive.</p>
+Next option is supported for <code>ServiceTemplate</code> objects only</p>
+</div>
+<ol>
+<li>Reference FluxCD source of the Helm chart in <code>.spec.helm.chartSource</code></li>
+</ol>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>
+<code>spec.helm.chartSpec</code>, <code>spec.helm.chartRef</code>, <code>spec.helm.chartSource</code> are mutually exclusive.</p>
 </div>
 <p>To automatically create the <code>HelmChart</code> for the <code>Template</code>, configure the following custom helm chart parameters
 under <code>spec.helm.chartSpec</code>:</p>
