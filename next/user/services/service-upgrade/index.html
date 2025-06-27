@@ -3863,7 +3863,7 @@ Before you begin, make sure all templates you're going to add to <code>ServiceTe
 Templates can be propagated to other namespaces using <a href="../../../reference/template/">Template Life Cycle Management</a>.</p>
 </div>
 <p>First, you need to create a <code>ServiceTemplateChain</code> object:</p>
-<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">k0rdent.mirantis.com/v1alpha1</span>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">k0rdent.mirantis.com/v1beta1</span>
 <span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ServiceTemplateChain</span>
 <span class="nt">metadata</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ingress-nginx-chain</span>
@@ -3946,7 +3946,7 @@ If you try to change the service template, in the logs, you'll see an error mess
 </code></pre></div>
 <h2 id="service-version-rollback">Service Version Rollback<a class="headerlink" href="#service-version-rollback" title="Permanent link">#</a></h2>
 <p>In general, the process of rolling back a service to the previous version is the same as upgrading the service in the first place. You'll need to create a separate <code>ServiceTemplateChain</code>, which defines the downgrade path:</p>
-<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">k0rdent.mirantis.com/v1alpha1</span>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">k0rdent.mirantis.com/v1beta1</span>
 <span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ServiceTemplateChain</span>
 <span class="nt">metadata</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ingress-nginx-chain</span>
