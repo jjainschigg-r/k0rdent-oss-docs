@@ -16,7 +16,7 @@
         <link rel="prev" href="../kof-storing/">
       
       
-        <link rel="next" href="../kof-scaling/">
+        <link rel="next" href="../kof-alerts/">
       
       
       <link rel="icon" href="../../../img/k0rdent-logo-mark-inverted.svg">
@@ -1603,6 +1603,8 @@
       
         
       
+        
+      
     
     
     
@@ -1788,6 +1790,15 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#single-sign-on" class="md-nav__link">
+    <span class="md-ellipsis">
+      Single Sign-On
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#cluster-overview" class="md-nav__link">
     <span class="md-ellipsis">
       Cluster Overview
@@ -1828,10 +1839,40 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#access-to-the-kof-ui" class="md-nav__link">
+    <span class="md-ellipsis">
+      Access to the KOF UI
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kof-alerts/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    KOF Alerts
+  </span>
+  
+
+      </a>
     </li>
   
 
@@ -3825,6 +3866,15 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#single-sign-on" class="md-nav__link">
+    <span class="md-ellipsis">
+      Single Sign-On
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#cluster-overview" class="md-nav__link">
     <span class="md-ellipsis">
       Cluster Overview
@@ -3865,6 +3915,15 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#access-to-the-kof-ui" class="md-nav__link">
+    <span class="md-ellipsis">
+      Access to the KOF UI
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -3899,7 +3958,7 @@
 <h1 id="using-kof">Using KOF<a class="headerlink" href="#using-kof" title="Permanent link">#</a></h1>
 <p>Most of the time, you'll access KOF's data through Grafana.</p>
 <h2 id="access-to-grafana">Access to Grafana<a class="headerlink" href="#access-to-grafana" title="Permanent link">#</a></h2>
-<p>To make Grafana available, follow these steps:</p>
+<p>To make Grafana available, start with these steps:</p>
 <ol>
 <li>
 <p>Get the Grafana username and password:
@@ -3923,6 +3982,10 @@
 </ol>
 <p><img alt="collect-from-3-cluster-roles" src="../../../assets/kof/collect-from-3-cluster-roles--2025-04-17.gif" /></p>
 <p><img alt="grafana-demo" src="../../../assets/kof/grafana-2025-01-14.gif" /></p>
+<h3 id="single-sign-on">Single Sign-On<a class="headerlink" href="#single-sign-on" title="Permanent link">#</a></h3>
+<p>Port forwarding, as described above, is a quick solution.</p>
+<p>Single Single-On provides better experience. If you want to enable it,
+please apply this advanced guide: <a href="https://github.com/k0rdent/kof/blob/main/docs/dex-sso.md">SSO for Grafana</a>.</p>
 <h3 id="cluster-overview">Cluster Overview<a class="headerlink" href="#cluster-overview" title="Permanent link">#</a></h3>
 <p>From here you can get an overview of the cluster, including:</p>
 <ul>
@@ -3996,6 +4059,66 @@
 </ul>
 </li>
 </ol>
+<h2 id="access-to-the-kof-ui">Access to the KOF UI<a class="headerlink" href="#access-to-the-kof-ui" title="Permanent link">#</a></h2>
+<p>When the <a href="https://opentelemetry.io/docs/platforms/kubernetes/operator/target-allocator/">TargetAllocator</a> is in use,
+the configuration of <a href="https://opentelemetry.io/docs/collector/">OpenTelemetryCollectors</a>
+Prometheus <a href="https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/prometheusreceiver#prometheus-api-server">receivers</a>
+is distributed across the cluster.</p>
+<p>The KOF UI collects metrics metadata from the same endpoints that are scraped by the Prometheus server:</p>
+<pre class="mermaid"><code>graph TB
+    KOF_UI[KOF UI] --&gt; C1OTC11
+    KOF_UI --&gt; C1OTC1N
+    KOF_UI --&gt; C1OTC21
+    KOF_UI --&gt; C1OTC2N
+    KOF_UI --&gt; C2OTC11
+    KOF_UI --&gt; C2OTC1N
+    KOF_UI --&gt; C2OTC21
+    KOF_UI --&gt; C2OTC2N
+    subgraph Cluster1
+    subgraph C1Node1[Node 1]
+        C1OTC11[OTel Collector]
+        C1OTC1N[OTel Collector]
+    end
+    subgraph C1NodeN[Node N]
+        C1OTC21[OTel Collector]
+        C1OTC2N[OTel Collector]
+    end
+
+    C1OTC11 --PrometheusReceiver--&gt; C1TA[TargetAllocator]
+    C1OTC1N --PrometheusReceiver--&gt; C1TA
+    C1OTC21 --PrometheusReceiver--&gt; C1TA
+    C1OTC2N --PrometheusReceiver--&gt; C1TA
+    end
+    subgraph Cluster2
+    subgraph C2Node1[Node 1]
+        C2OTC11[OTel Collector]
+        C2OTC1N[OTel Collector]
+    end
+    subgraph C2NodeN[Node N]
+        C2OTC21[OTel Collector]
+        C2OTC2N[OTel Collector]
+    end
+
+    C2OTC11 --PrometheusReceiver--&gt; C2TA[TargetAllocator]
+    C2OTC1N --PrometheusReceiver--&gt; C2TA
+    C2OTC21 --PrometheusReceiver--&gt; C2TA
+    C2OTC2N --PrometheusReceiver--&gt; C2TA
+    end</code></pre>
+<p>You can access the KOF UI by following these steps:</p>
+<ol>
+<li>
+<p>Forward a port to the KOF UI:</p>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>port-forward<span class="w"> </span>-n<span class="w"> </span>kof<span class="w"> </span>deploy/kof-mothership-kof-operator<span class="w"> </span><span class="m">9090</span>:9090
+</code></pre></div>
+</li>
+<li>
+<p>Open the link <a href="http://127.0.0.1:9090">http://127.0.0.1:9090</a></p>
+</li>
+<li>
+<p>Check the state of the endpoints:</p>
+</li>
+</ol>
+<p><img alt="kof-ui-demo" src="../../../assets/kof/ui-2025-06-09.png" /></p>
 
 
 

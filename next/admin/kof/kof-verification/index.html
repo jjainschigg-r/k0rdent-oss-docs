@@ -1603,6 +1603,8 @@
       
         
       
+        
+      
     
     
     
@@ -1804,6 +1806,27 @@
   
   <span class="md-ellipsis">
     Using KOF
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kof-alerts/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    KOF Alerts
   </span>
   
 
@@ -3877,6 +3900,11 @@ kubectl<span class="w"> </span>get<span class="w"> </span>secret<span class="w">
 <span class="nv">KUBECONFIG</span><span class="o">=</span>regional-kubeconfig<span class="w"> </span>kubectl<span class="w"> </span>get<span class="w"> </span>pod<span class="w"> </span>-A
 <span class="nv">KUBECONFIG</span><span class="o">=</span>child-kubeconfig<span class="w"> </span>kubectl<span class="w"> </span>get<span class="w"> </span>pod<span class="w"> </span>-A
 </code></pre></div></p>
+<p>If you're upgrading from a KOF version less than <code>1.1.0</code>, after upgrade please run the following:
+<div class="highlight"><pre><span></span><code><span class="nv">KUBECONFIG</span><span class="o">=</span>regional-kubeconfig<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>--server-side<span class="w"> </span>--force-conflicts<span class="w"> </span><span class="se">\</span>
+-f<span class="w"> </span>https://github.com/grafana/grafana-operator/releases/download/v5.18.0/crds.yaml
+</code></pre></div>
+This is noted as required in the <a href="https://github.com/grafana/grafana-operator/releases/tag/v5.18.0">grafana-operator release notes</a>.</p>
 </li>
 <li>
 <p>Wait until the value of <code>READY</code> changes to <code>True</code>

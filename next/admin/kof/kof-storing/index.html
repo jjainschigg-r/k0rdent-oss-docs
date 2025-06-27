@@ -1603,6 +1603,8 @@
       
         
       
+        
+      
     
     
     
@@ -1831,6 +1833,27 @@
   
   <span class="md-ellipsis">
     Using KOF
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kof-alerts/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    KOF Alerts
   </span>
   
 
@@ -3938,13 +3961,21 @@ No additional steps are required here.</p>
 </code></pre></div></p>
 </li>
 <li>
+<p>If you want to use a non-default storage class, add to the <code>storage-values.yaml</code> file:
+    <div class="highlight"><pre><span></span><code><span class="nt">victoria-logs-cluster</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">vlstorage</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">persistentVolume</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">storageClassName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;EXAMPLE_STORAGE_CLASS&gt;</span>
+</code></pre></div></p>
+</li>
+<li>
 <p>Install the <code>kof-storage</code> and <code>kof-collectors</code> charts to the management cluster:
     <div class="highlight"><pre><span></span><code>helm<span class="w"> </span>upgrade<span class="w"> </span>-i<span class="w"> </span>--reset-values<span class="w"> </span>--wait<span class="w"> </span>-n<span class="w"> </span>kof<span class="w"> </span>kof-storage<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>-f<span class="w"> </span>storage-values.yaml<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>oci://ghcr.io/k0rdent/kof/charts/kof-storage<span class="w"> </span>--version<span class="w"> </span><span class="m">1</span>.0.0
+<span class="w">  </span>oci://ghcr.io/k0rdent/kof/charts/kof-storage<span class="w"> </span>--version<span class="w"> </span><span class="m">1</span>.1.0
 
 helm<span class="w"> </span>upgrade<span class="w"> </span>-i<span class="w"> </span>--reset-values<span class="w"> </span>--wait<span class="w"> </span>-n<span class="w"> </span>kof<span class="w"> </span>kof-collectors<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>oci://ghcr.io/k0rdent/kof/charts/kof-collectors<span class="w"> </span>--version<span class="w"> </span><span class="m">1</span>.0.0
+<span class="w">  </span>oci://ghcr.io/k0rdent/kof/charts/kof-collectors<span class="w"> </span>--version<span class="w"> </span><span class="m">1</span>.1.0
 </code></pre></div></p>
 </li>
 </ol>
@@ -3979,7 +4010,7 @@ helm<span class="w"> </span>upgrade<span class="w"> </span>-i<span class="w"> </
 <p>Install the <code>kof-collectors</code> chart to the management cluster:
     <div class="highlight"><pre><span></span><code>helm<span class="w"> </span>upgrade<span class="w"> </span>-i<span class="w"> </span>--reset-values<span class="w"> </span>--wait<span class="w"> </span>-n<span class="w"> </span>kof<span class="w"> </span>kof-collectors<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>-f<span class="w"> </span>collectors-values.yaml<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>oci://ghcr.io/k0rdent/kof/charts/kof-collectors<span class="w"> </span>--version<span class="w"> </span><span class="m">1</span>.0.0
+<span class="w">  </span>oci://ghcr.io/k0rdent/kof/charts/kof-collectors<span class="w"> </span>--version<span class="w"> </span><span class="m">1</span>.1.0
 </code></pre></div></p>
 </li>
 </ol>
@@ -4016,7 +4047,7 @@ helm<span class="w"> </span>upgrade<span class="w"> </span>-i<span class="w"> </
 <p>Install the <code>kof-collectors</code> chart to the management cluster:
     <div class="highlight"><pre><span></span><code>helm<span class="w"> </span>upgrade<span class="w"> </span>-i<span class="w"> </span>--reset-values<span class="w"> </span>--wait<span class="w"> </span>-n<span class="w"> </span>kof<span class="w"> </span>kof-collectors<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>-f<span class="w"> </span>collectors-values.yaml<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>oci://ghcr.io/k0rdent/kof/charts/kof-collectors<span class="w"> </span>--version<span class="w"> </span><span class="m">1</span>.0.0
+<span class="w">  </span>oci://ghcr.io/k0rdent/kof/charts/kof-collectors<span class="w"> </span>--version<span class="w"> </span><span class="m">1</span>.1.0
 </code></pre></div></p>
 </li>
 </ol>
@@ -4029,7 +4060,7 @@ using the <a href="https://github.com/open-telemetry/opentelemetry-collector-con
 <ol>
 <li>
 <p>Create AWS IAM user with access to CloudWatch Logs,
-    e.g. by allowing <code>"Action": "logs:*"</code> in the inline policy.</p>
+    for example, with <code>"Action": "logs:*"</code> allowed in the inline policy.</p>
 </li>
 <li>
 <p>Create access key and save it to the <code>cloudwatch-credentials</code> file:
@@ -4102,7 +4133,7 @@ cat<span class="w"> </span>&gt;collectors-values.yaml<span class="w"> </span><sp
 <p>Install the <code>kof-collectors</code> chart to the management cluster:
     <div class="highlight"><pre><span></span><code>helm<span class="w"> </span>upgrade<span class="w"> </span>-i<span class="w"> </span>--reset-values<span class="w"> </span>--wait<span class="w"> </span>-n<span class="w"> </span>kof<span class="w"> </span>kof-collectors<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>-f<span class="w"> </span>collectors-values.yaml<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>oci://ghcr.io/k0rdent/kof/charts/kof-collectors<span class="w"> </span>--version<span class="w"> </span><span class="m">1</span>.0.0
+<span class="w">  </span>oci://ghcr.io/k0rdent/kof/charts/kof-collectors<span class="w"> </span>--version<span class="w"> </span><span class="m">1</span>.1.0
 </code></pre></div></p>
 </li>
 <li>
