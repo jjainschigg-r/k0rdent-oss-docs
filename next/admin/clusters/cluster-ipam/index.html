@@ -3808,6 +3808,7 @@
 <li>One IP per worker node</li>
 </ul>
 </li>
+<li>A valid network gateway IP</li>
 </ul>
 <h2 id="define-ipam-configuration">Define IPAM configuration<a class="headerlink" href="#define-ipam-configuration" title="Permanent link">#</a></h2>
 <p>There are two options for configuring IPAM in k0rdent</p>
@@ -3834,6 +3835,8 @@ The value for <code>provider</code> must be <code>in-cluster</code> or <code>ipa
 <span class="w">    </span><span class="c1"># ipAddresses:</span>
 <span class="w">    </span><span class="c1"># - &lt;ip-1&gt;</span>
 <span class="w">    </span><span class="c1"># - &lt;ip-2&gt;</span>
+<span class="w">    </span><span class="nt">gateway</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;network gateway&gt;</span>
+<span class="w">    </span><span class="nt">prefix</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;network prefix&gt;</span>
 <span class="w">  </span><span class="nt">cluster</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;cluster-name&gt;</span>
 </code></pre></div>
 <ul>
@@ -3862,6 +3865,8 @@ The value for <code>provider</code> must be <code>in-cluster</code> or <code>ipa
 <span class="w">    </span><span class="c1"># ipAddresses:</span>
 <span class="w">    </span><span class="c1"># - &lt;ip-1&gt;</span>
 <span class="w">    </span><span class="c1"># - &lt;ip-2&gt;</span>
+<span class="w">    </span><span class="nt">gateway</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;network gateway&gt;</span>
+<span class="w">    </span><span class="nt">prefix</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;network prefix&gt;</span>
 <span class="w">  </span><span class="nt">provider</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;provider-name&gt;</span>
 <span class="nt">status</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">bound</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
@@ -3915,6 +3920,8 @@ The value for <code>provider</code> must be <code>in-cluster</code> or <code>ipa
 <span class="w">        </span><span class="c1"># ipAddresses:</span>
 <span class="w">        </span><span class="c1"># - &lt;ip-1&gt;</span>
 <span class="w">        </span><span class="c1"># - &lt;ip-2&gt;</span>
+<span class="w">        </span><span class="nt">gateway</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;network gateway&gt;</span>
+<span class="w">        </span><span class="nt">prefix</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;network prefix&gt;</span>
 </code></pre></div>
 </li>
 <li>
