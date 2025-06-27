@@ -3157,6 +3157,15 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#configuring-k0s-k0smotron-parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configuring k0s, k0smotron parameters
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -3858,6 +3867,15 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#configuring-k0s-k0smotron-parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configuring k0s, k0smotron parameters
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -3935,6 +3953,17 @@ parameters:</p>
 Compute Gallery, Azure Marketplace, and so on).</p>
 <p>Detailed information regarding image can be found in <a href="https://capz.sigs.k8s.io/self-managed/custom-images">CAPZ documentation</a></p>
 <p>By default, the latest official CAPZ Ubuntu based image is used.</p>
+<h2 id="configuring-k0s-k0smotron-parameters">Configuring k0s, k0smotron parameters<a class="headerlink" href="#configuring-k0s-k0smotron-parameters" title="Permanent link">#</a></h2>
+<ul>
+<li><code>k0s.arch</code> (string): Defines the K0s Arch in its download URL. Available if <a href="../../../appendix/appendix-extend-mgmt/#configuring-a-global-k0s-url">global.k0sURL</a>
+   is set. Possible values: <code>"amd64"</code> (default), <code>"arm64"</code>, <code>"arm"</code>.</li>
+<li><code>k0s.cpArgs</code> <sup>only standalone</sup> (array of strings): A list of extra arguments to be passed to k0s controller.
+   See: <a href="https://docs.k0sproject.io/stable/cli/k0s_controller">https://docs.k0sproject.io/stable/cli/k0s_controller</a>.</li>
+<li><code>k0s.workerArgs</code> (array of strings): A list of extra arguments for configuring the k0s worker node. See: <a href="https://docs.k0sproject.io/stable/cli/k0s_worker">https://docs.k0sproject.io/stable/cli/k0s_worker</a>.</li>
+<li><code>k0smotron.controllerPlaneFlags</code> <sup>only hosted</sup> (array of strings): The <code>controllerPlaneFlags</code> parameter enables you to configure additional flags for the k0s control plane
+   and to override existing flags. The default flags are kept unless they are explicitly overriden. Flags with arguments must be specified as a single
+   string, such as <code>--some-flag=argument</code>.</li>
+</ul>
 
 
 
