@@ -3455,6 +3455,8 @@
       <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
       
       
+        
+      
       
         <label class="md-nav__link md-nav__link--active" for="__toc">
           
@@ -3483,21 +3485,14 @@
   
   
   
+    
+  
   
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon"></span>
       Table of contents
     </label>
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#extended-management-configuration" class="md-nav__link">
-    <span class="md-ellipsis">
-      Extended Management Configuration
-    </span>
-  </a>
-  
-</li>
       
         <li class="md-nav__item">
   <a href="#configuration-guide" class="md-nav__link">
@@ -3549,6 +3544,15 @@
   <a href="#configuring-manager-settings-for-capi-providers" class="md-nav__link">
     <span class="md-ellipsis">
       Configuring manager settings for CAPI providers
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuring-the-sveltos-stuck-tokens-controller" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configuring the Sveltos Stuck Tokens Controller
     </span>
   </a>
   
@@ -3840,21 +3844,14 @@
   
   
   
+    
+  
   
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon"></span>
       Table of contents
     </label>
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#extended-management-configuration" class="md-nav__link">
-    <span class="md-ellipsis">
-      Extended Management Configuration
-    </span>
-  </a>
-  
-</li>
       
         <li class="md-nav__item">
   <a href="#configuration-guide" class="md-nav__link">
@@ -3911,6 +3908,15 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#configuring-the-sveltos-stuck-tokens-controller" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configuring the Sveltos Stuck Tokens Controller
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -3947,9 +3953,7 @@
   
 
 
-  <h1>Extended management configuration</h1>
-
-<h2 id="extended-management-configuration">Extended Management Configuration<a class="headerlink" href="#extended-management-configuration" title="Permanent link">#</a></h2>
+<h1 id="extended-management-configuration">Extended Management Configuration<a class="headerlink" href="#extended-management-configuration" title="Permanent link">#</a></h1>
 <p>k0rdent is deployed with the following default configuration, which may vary
 depending on the release version:</p>
 <div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">k0rdent.mirantis.com/v1beta1</span>
@@ -3991,7 +3995,7 @@ This enables you to manage the list of providers to deploy and adjust the defaul
 <li>
 <p>Create <code>management.yaml</code> file and configure core components and providers.
   For example:</p>
-<p><div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">k0rdent.mirantis.com/v1beta1</span>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">k0rdent.mirantis.com/v1beta1</span>
 <span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Management</span>
 <span class="nt">metadata</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kcm</span>
@@ -4008,8 +4012,8 @@ This enables you to manage the list of providers to deploy and adjust the defaul
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">projectsveltos</span>
 <span class="w">  </span><span class="nt">release</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kcm-0-0-7</span>
 </code></pre></div>
-      In the example above, the <code>Management</code> object is configured with custom registry settings for the KCM controller
-      and a reduced list of providers.</p>
+<p>In the example above, the <code>Management</code> object is configured with custom registry settings for the KCM controller
+and a reduced list of providers.</p>
 </li>
 <li>
 <p>Specify <code>--create-management=false</code> controller argument and install k0rdent:
@@ -4050,7 +4054,7 @@ Use the <code>oci://</code> prefix for OCI registries. Default: <code>oci://ghcr
 configuration as <code>global.registry</code> (for example, it is used for pulling cluster Helm extensions, such as the Cloud
 Controller Manager and to download required images, such as <code>etcd</code> or <code>kube-proxy</code>).</li>
 <li><code>insecureRegistry</code>: Allows connecting to an HTTP registry. Default: <code>false</code>.</li>
-<li><code>registryCredsSecret</code>: Specifies the name of a Kubernetes <code>Secret</code> containing authentication credentials for the 
+<li><code>registryCredsSecret</code>: Specifies the name of a Kubernetes <code>Secret</code> containing authentication credentials for the
 registry (optional). This <code>Secret</code> should exist in the system namespace (default: <code>kcm-system</code>).</li>
 </ul>
 <p>Additionally, if your templates repository (<code>templatesRepoURL</code>) and/or registry (<code>globalRegistry</code>) is private and
@@ -4189,7 +4193,7 @@ If you’re using a private registry signed by an unknown certificate authority,
 </code></pre></div>
 <h3 id="configuring-a-custom-image-for-kcm-controllers">Configuring a Custom Image for KCM controllers<a class="headerlink" href="#configuring-a-custom-image-for-kcm-controllers" title="Permanent link">#</a></h3>
 <p>You can override the default image for the KCM controllers by specifying the <code>repository</code>, <code>tag</code> and <code>pullPolicy</code>
-parameters under <code>spec.core.kcm.config.image</code>: </p>
+parameters under <code>spec.core.kcm.config.image</code>:</p>
 <p>Example Configuration:</p>
 <div class="highlight"><pre><span></span><code><span class="nt">spec</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">core</span><span class="p">:</span>
@@ -4203,12 +4207,12 @@ parameters under <code>spec.core.kcm.config.image</code>: </p>
 <h3 id="configuring-manager-settings-for-capi-providers">Configuring manager settings for CAPI providers<a class="headerlink" href="#configuring-manager-settings-for-capi-providers" title="Permanent link">#</a></h3>
 <p>Starting from <code>v0.3.0</code>, k0rdent supports configuring manager settings for CAPI providers. You can override
 these settings by defining the <code>spec.providers[*].config.manager</code> section. The values under the <code>manager</code> section should
-follow the format described here:
-https://github.com/kubernetes-sigs/cluster-api-operator/blob/v0.18.1/api/v1alpha2/provider_types.go#L126.</p>
+follow the format defined by the <a href="https://pkg.go.dev/sigs.k8s.io/cluster-api-operator/api/v1alpha2#ManagerSpec">CAPI Operator</a>.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>This is not supported for the <code>k0sproject-k0smotron</code> provider due to a bug in the CAPI Operator:
+<p>Prior to <code>v1.1.0</code> k0rdent, this is not supported for the <code>k0sproject-k0smotron</code> provider due to a bug in the CAPI Operator:
 <a href="https://github.com/kubernetes-sigs/cluster-api-operator/issues/787">CAPI operator incorrectly finds the manager container if the number of containers is &gt;1</a>.</p>
+<p>Starting <code>v1.1.0</code> k0rdent shipped with a CAPI Operator version with <a href="https://github.com/kubernetes-sigs/cluster-api-operator/pull/796">the issue addressed</a>.</p>
 </div>
 <p>For example, to override feature gates for the Cluster API Provider AWS, configure the following:</p>
 <div class="highlight"><pre><span></span><code><span class="nt">spec</span><span class="p">:</span>
@@ -4220,6 +4224,20 @@ https://github.com/kubernetes-sigs/cluster-api-operator/blob/v0.18.1/api/v1alpha
 <span class="w">          </span><span class="nt">MachinePool</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 <span class="w">          </span><span class="nt">EKSEnableIAM</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 <span class="w">          </span><span class="nt">EKSAllowAddRoles</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</code></pre></div>
+<h3 id="configuring-the-sveltos-stuck-tokens-controller">Configuring the Sveltos Stuck Tokens Controller<a class="headerlink" href="#configuring-the-sveltos-stuck-tokens-controller" title="Permanent link">#</a></h3>
+<p>If a management cluster has some maintenance activity or hardware issue causing it to go down for more than ~30 minutes,
+the token for the management <code>sveltoscluster</code> object expires. This leads to continuous errors and
+failure to reconcile the management <code>sveltoscluster</code> object. <a href="https://github.com/k0rdent/kcm/issues/995">Related issue: KCM #995</a>.</p>
+<p>A dedicated controller that automatically detects and renews stuck tokens is shipped with
+k0rdent starting <code>v1.1.0</code> and is <em>disabled</em> by default.</p>
+<p>To enable the controller, set:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">core</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">kcm</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">config</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">controller</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">enableSveltosExpiredCtrl</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 </code></pre></div>
 
 
